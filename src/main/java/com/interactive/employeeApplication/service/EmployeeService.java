@@ -5,9 +5,10 @@ import com.interactive.employeeApplication.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+// import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,11 +36,11 @@ public class EmployeeService {
             employee.setDepartment(employeeDetails.getDepartment());
             return employeeRepository.save(employee);
         }
-        return null; // Or throw an exception if not found
+        return null; 
     }
 
-    public List<Employee> searchByName(String name) {
-        return employeeRepository.findByNameContaining(name);
+    public Page<Employee> searchByName(String name, Pageable pageable) {
+        return employeeRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
     public Page<Employee> findAllPaginated(int page, int size) {

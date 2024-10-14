@@ -4,6 +4,9 @@ import com.interactive.employeeApplication.model.Employee;
 import com.interactive.employeeApplication.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +21,10 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping
-    public Employee createEmployee(@RequestBody Employee employee) {
-        return employeeService.save(employee);
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+        Employee savedEmployee = employeeService.save(employee);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(savedEmployee);
     }
 
     @PutMapping("/{id}")
@@ -39,8 +44,20 @@ public class EmployeeController {
     }
 
     @GetMapping("/search")
-    public List<Employee> searchEmployees(@RequestParam String name) {
-        return employeeService.searchByName(name);
+    public ResponseEntity<Page<Employee>> searchEmployees(
+            @RequestParam String name,
+            Pageable pageable) {
+
+        Page<Employee> employees = employeeService.searchByName(name, pageable);
+
+        if (employees.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(employees);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(employees.getTotalElements()));
+
+        return ResponseEntity.ok().headers(headers).body(employees);
     }
 
     @GetMapping
