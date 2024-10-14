@@ -31,6 +31,7 @@ Copy code
         "id": 1  // Existing department ID
     }
 }
+
 **2. Update Employee**
 Endpoint: PUT /api/employees/{id}
 Request Body:
@@ -45,6 +46,7 @@ Copy code
         "id": 2  // Existing department ID
     }
 }
+
 **3. Get Employee by ID**
 Endpoint: GET /api/employees/{id}
 
